@@ -1,0 +1,2 @@
+CREATE USER keycloak WITH PASSWORD 'secret';
+CREATE DATABASE keycloak WITH OWNER keycloak ENCODING 'UTF8';

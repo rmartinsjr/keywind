@@ -1,0 +1,59 @@
+---
+# file: docker-compose.yml
+# docker compose -p keycloak up -d
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    command: start-dev --import-realm
+    environment:
+      # Both KEYCLOAK_USER and KEYCLOAK_PASSWORD can be used with _FILE
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: secret
+
+      # Set DB options
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://pgsql:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: secret
+
+    volumes:
+      - ./theme/keywind:/opt/keycloak/themes/keywind
+      - ./keycloak/realm:/opt/keycloak/data/import
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+    depends_on:
+      - pgsql
+    restart: unless-stopped
+
+  pgsql:
+    image: postgres:16
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+      - ./keycloak/db:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+    restart: unless-stopped
+    
+  adminer:
+    image: adminer
+    ports:
+      - 8081:8080
+    networks:
+      - backend
+    depends_on:
+      - pgsql
+    restart: unless-stopped
+
+networks:
+  backend:
+
+volumes:
+  pgsql-data:

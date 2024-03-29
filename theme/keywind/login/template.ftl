@@ -20,7 +20,7 @@
 >
   <#assign cardHeader>
     <@logo.kw>
-      ${kcSanitize(msg("loginTitleHtml", (realm.displayNameHtml!"")))?no_esc}
+      <img src="${url.resourcesPath}/img/avantiv_logo_320x132.png" alt="Avantiv" style="margin: auto">
     </@logo.kw>
     <#if !(auth?has_content && auth.showUsername() && !auth.showResetCredentials())>
       <@heading.kw>
